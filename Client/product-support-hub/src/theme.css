@@ -1,0 +1,25 @@
+/* theme-override.css */
+.theme-navbar {
+  background-color: var(--theme-bg) !important;
+  color: var(--theme-text) !important;
+  border-bottom: 1px solid var(--theme-border) !important;
+}
+
+.theme-dropdown {
+  background-color: var(--theme-bg) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+
+.theme-text {
+  color: var(--theme-text) !important;
+}
+
+.theme-button {
+  background-color: var(--theme-btn-bg) !important;
+  color: var(--theme-btn-text) !important;
+}
+
+.theme-icon {
+  color: var(--theme-active) !important;
+}
