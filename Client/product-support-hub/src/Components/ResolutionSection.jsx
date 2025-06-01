@@ -9,7 +9,9 @@ function ResolutionSection({ bug }) {
 
       {bug.status.toLowerCase() === 'resolved' ? (
         <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded">
-          <p className="text-green-700">{bug.resolution}</p>
+          <p className="text-green-700">
+            {bug.resolution ? bug.resolution : 'No resolution'}
+          </p>
         </div>
       ) : bug.status.toLowerCase() === 'in progress' ? (
         <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">

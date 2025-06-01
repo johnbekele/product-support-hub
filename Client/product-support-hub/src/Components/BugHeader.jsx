@@ -13,7 +13,7 @@ function BugHeader({ bug, onClick }) {
       <div className="flex justify-between items-start">
         <div>
           <div className="flex items-center space-x-2 mb-2">
-            <span className="text-sm font-mono text-gray-500">{bug.id}</span>
+            {/* <span className="text-sm font-mono text-gray-500">{bug.id}</span> */}
             <span
               className={`text-xs px-2 py-1 rounded-full font-medium ${getSeverityColor(
                 bug.severity

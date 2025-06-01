@@ -21,7 +21,9 @@
     "express": "^4.21.1",
     "express-session": "^1.18.1",
     "firebase": "^11.6.0",
+    "glob": "^11.0.2",
     "jsonwebtoken": "^9.0.2",
+    "lru-cache": "^11.1.0",
     "mongodb": "^6.15.0",
     "mongoose": "^8.14.3",
     "node-cache": "^5.1.2",
@@ -31,6 +33,7 @@
     "passport-google-oidc": "^0.1.0",
     "passport-local": "^1.0.0",
     "pg": "^8.13.1",
+    "rimraf": "^6.0.1",
     "socket.io": "^4.8.1"
   }
 }

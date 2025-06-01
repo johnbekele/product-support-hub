@@ -1,35 +1,27 @@
 import React, { lazy, Suspense } from 'react';
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import ProtectedRoute from './ProtectedRoute.jsx';
 
 const UserDashboard = lazy(() =>
   import('../Pages/Dashboards/UserDashboard.jsx')
 );
+const LoginPage = lazy(() => import('../Pages/LoginPage.jsx'));
+
 const AppRoutes = () => {
   return (
     <Router>
-      <InnerRoutes />
-    </Router>
-  );
-};
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
 
-const InnerRoutes = () => {
-  return (
-    <Routes>
-      {/* Home */}
-      <Route
-        path="/"
-        element={
-          <Suspense fallback={<div>Loading...</div>}>
-            <UserDashboard />
-          </Suspense>
-        }
-      />
-    </Routes>
+          {/* Protected routes wrapper */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/" element={<UserDashboard />} />
+            {/* Add more protected nested routes here if needed */}
+          </Route>
+        </Routes>
+      </Suspense>
+    </Router>
   );
 };
 

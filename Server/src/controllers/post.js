@@ -1,5 +1,5 @@
 import Post from '../model/postSchema.js';
-
+import User from '../model/userSchema.js';
 const getPosts = async (req, res) => {
   try {
     const posts = await Post.find()
@@ -17,8 +17,9 @@ const addPost = async (req, res) => {
   try {
     const { title, description, product, type, severity, status, resolution } =
       req.body;
-    const userId = req.user._id;
+    const username = req.user.username;
 
+    console.log(req.body);
     // Validate input
 
     if (
@@ -44,7 +45,7 @@ const addPost = async (req, res) => {
       severity,
       status,
       resolution,
-      createdBy: userId,
+      createdBy: username,
     });
 
     // Save post to database
@@ -60,4 +61,21 @@ const addPost = async (req, res) => {
   }
 };
 
-export default { getPosts, addPost };
+const postResolution = async (req, res) => {
+  const { postId } = req.params;
+  const { resolution } = req.body;
+  try {
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+    post.resolution = resolution;
+    await post.save();
+    return res.status(200).json(post);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Server error' });
+  }
+};
+
+export default { getPosts, addPost, postResolution };

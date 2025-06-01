@@ -24,6 +24,7 @@
     "dotenv": "^16.4.7",
     "framer-motion": "^12.7.3",
     "i": "^0.3.7",
+    "jwt-decode": "^4.0.0",
     "lottie-react": "^2.4.1",
     "npm": "^10.9.2",
     "prop-types": "^15.8.1",

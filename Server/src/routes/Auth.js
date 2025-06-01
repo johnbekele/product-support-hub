@@ -19,6 +19,7 @@ router.put(
   isAdmin,
   authController.unfreezUser
 );
+router.put('/reset/password', authController.resetPassword);
 
 router.post('/profile/:userId', authController.findUserProfile);
 // Google OAuth routes

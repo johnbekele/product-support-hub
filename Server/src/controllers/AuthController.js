@@ -367,6 +367,26 @@ const findUserProfile = async (req, res) => {
   }
 };
 
+const resetPassword = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    //Hash passsword
+    const hashedPassword = await bcrypt.hash(password, saltround);
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).json({ message: 'Password reset successfully' });
+  } catch (error) {
+    console.error('Error resetting password:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 // Export the new methods
 export default {
   getMe,
@@ -381,4 +401,5 @@ export default {
   googleAuth,
   googleCallback,
   findUserProfile,
+  resetPassword,
 };

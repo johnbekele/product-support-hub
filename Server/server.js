@@ -5,6 +5,7 @@ import connectDB from './src/config/dbConfig.js';
 import dotenv from 'dotenv';
 import Auth from './src/routes/Auth.js';
 import Post from './src/routes/api/Post.js';
+import Comment from './src/routes/api/comment.js';
 import { Server } from 'socket.io';
 import http from 'http';
 import configureSocket from './src/config/socket.js';
@@ -64,6 +65,7 @@ configurePassport();
 // Routes
 app.use('/api/auth', Auth);
 app.use('/api/post', Post);
+app.use('/api/comment', Comment);
 
 // Global error handler
 app.use((err, req, res, next) => {

@@ -40,14 +40,14 @@ const postSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    suggestedResolutions: [],
     comment: [
       {
         user: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'User',
+          type: String,
           required: true,
         },
-        text: {
+        content: {
           type: String,
           required: true,
         },
@@ -58,6 +58,10 @@ const postSchema = new mongoose.Schema(
         likes: {
           type: Number,
           default: 0,
+        },
+        timestamps: {
+          type: Date,
+          default: Date.now,
         },
       },
     ],

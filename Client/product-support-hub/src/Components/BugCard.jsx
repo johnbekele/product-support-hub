@@ -11,6 +11,7 @@ function BugCard({
   onResolutionSubmit,
   onVote,
   onLike,
+  onDelete,
 }) {
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 transition-all duration-200 hover:shadow-lg">
@@ -23,6 +24,7 @@ function BugCard({
           onResolutionSubmit={onResolutionSubmit}
           onVote={onVote}
           onLike={onLike}
+          onDelete={onDelete}
         />
       )}
     </div>

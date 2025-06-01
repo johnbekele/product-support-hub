@@ -2,9 +2,16 @@
 import React, { useState } from 'react';
 import { FaComment, FaThumbsUp } from 'react-icons/fa';
 import { formatDate } from '../utils/bugHelpers';
+import { useAuth } from '../Context/AuthContext';
+import { MdDelete } from 'react-icons/md';
 
-function CommentsSection({ comments, onSubmit, onLike }) {
+function CommentsSection({ comments, onSubmit, onLike, onDelete }) {
   const [newComment, setNewComment] = useState('');
+  const { user } = useAuth();
+
+  console.log('User:', user);
+
+  // console.log('Comments:', comments);
 
   const handleSubmit = () => {
     onSubmit(newComment);
@@ -24,20 +31,30 @@ function CommentsSection({ comments, onSubmit, onLike }) {
               key={comment.id}
               className="bg-white p-4 rounded-lg border border-gray-200"
             >
-              <p className="text-gray-800">{comment.text}</p>
+              <p className="text-gray-800">{comment.content}</p>
               <div className="flex justify-between items-center mt-2">
                 <div className="text-sm text-gray-500">
                   <span className="font-medium">{comment.user}</span>
                   <span className="mx-1">•</span>
-                  <span>{formatDate(comment.timestamp)}</span>
+                  {/* <span>{formatDate(comment.timestamp)}</span> */}
                 </div>
-                <button
-                  onClick={() => onLike(comment.id)}
-                  className="flex items-center text-sm text-gray-500 hover:text-blue-500"
-                >
-                  <FaThumbsUp className="mr-1" />
-                  <span>{comment.likes}</span>
-                </button>
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={() => onLike(comment.id)}
+                    className="flex items-center text-sm text-gray-500 hover:text-blue-500"
+                  >
+                    <FaThumbsUp className="mr-1" />
+                    <span>{comment.likes}</span>
+                  </button>
+                  {user && user.username === comment.user && (
+                    <button
+                      onClick={() => onDelete(comment._id)}
+                      className="flex items-center text-sm text-gray-500 hover:text-blue-500"
+                    >
+                      <MdDelete className="mr-1" />
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           ))}

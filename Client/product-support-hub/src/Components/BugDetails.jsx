@@ -10,6 +10,7 @@ function BugDetails({
   onResolutionSubmit,
   onVote,
   onLike,
+  onDelete,
 }) {
   return (
     <div className="border-t border-gray-200 p-5 bg-gray-50 animate-fadeIn">
@@ -27,6 +28,7 @@ function BugDetails({
         comments={bug.comments}
         onSubmit={onCommentSubmit}
         onLike={onLike}
+        onDelete={onDelete}
       />
     </div>
   );
