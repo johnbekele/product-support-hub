@@ -2,10 +2,15 @@ import React from 'react';
 import { useThomsonReutersTheme } from '../../Context/ThomsonReutersThemeContext';
 import BugSearchBar from '../../Components/BugSearchBar';
 import BugFeedPage from '../../Components/BugFeedPage';
-import UserNavBar from '../../Components/UserNavBar';
 import { usePost } from '../../Hook/usePost';
+import AddPostForm from '../../Components/AddPostForm';
 function UserDashboard() {
   const theme = useThomsonReutersTheme();
+  const [iscreatePost, setIsCreatePost] = React.useState(false);
+
+  const handlePost = () => {
+    setIsCreatePost(!iscreatePost);
+  };
 
   const bodyStyle = {
     backgroundColor: theme.components.body.backgroundColor,
@@ -24,7 +29,6 @@ function UserDashboard() {
 
   return (
     <div>
-      <UserNavBar theme={theme} />
       <div className="">
         <BugSearchBar />
         <BugFeedPage />

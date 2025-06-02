@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import logo from '../assets/img/logo.png';
 
 function UserNavBar({ theme }) {
@@ -16,10 +17,13 @@ function UserNavBar({ theme }) {
         </div>
       </div>
       <div style={{ width: '80%' }} className="flex justify-end ">
-        <div className="">Admin Dashboard </div>
+        <div className="text-stone-50">Admin Dashboard </div>
+        <Link className="text-stone-50" to="/createpost">
+          Create a post
+        </Link>
       </div>
     </header>
   );
 }
-0;
+
 export default UserNavBar;
