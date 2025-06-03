@@ -11,6 +11,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@google/genai": "^1.0.0",
     "@google/generative-ai": "^0.21.0",
     "axios": "^1.8.4",
     "bcrypt": "^5.1.1",
@@ -26,6 +27,7 @@
     "lru-cache": "^11.1.0",
     "mongodb": "^6.15.0",
     "mongoose": "^8.14.3",
+    "multer": "^2.0.0",
     "node-cache": "^5.1.2",
     "passport": "^0.7.0",
     "passport-google-oauth": "^2.0.0",

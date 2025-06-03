@@ -1,4 +1,6 @@
 import express from 'express';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import connectDB from './src/config/dbConfig.js';
@@ -11,6 +13,9 @@ import http from 'http';
 import configureSocket from './src/config/socket.js';
 import passport from 'passport';
 import configurePassport from './src/config/passportConfig.js';
+import imageRoutes from './src/routes/api/imageRoutes.js';
+import { setupUploadDirectory } from './src/utils/fileUtils.js';
+
 dotenv.config();
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -23,6 +28,10 @@ const server = http.createServer(app);
 const io = configureSocket(server);
 // Connect to database
 connectDB();
+
+// Set up file paths
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // CORS setup
 app.use(
@@ -66,6 +75,7 @@ configurePassport();
 app.use('/api/auth', Auth);
 app.use('/api/post', Post);
 app.use('/api/comment', Comment);
+app.use('/api/image', imageRoutes);
 
 // Global error handler
 app.use((err, req, res, next) => {
