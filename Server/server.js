@@ -15,6 +15,7 @@ import passport from 'passport';
 import configurePassport from './src/config/passportConfig.js';
 import imageRoutes from './src/routes/api/imageRoutes.js';
 import { setupUploadDirectory } from './src/utils/fileUtils.js';
+import errorHandler from './src/middleware/errorHandler.js';
 
 dotenv.config();
 
@@ -68,6 +69,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.set('io', io);
+app.use(errorHandler);
 
 configurePassport();
 
