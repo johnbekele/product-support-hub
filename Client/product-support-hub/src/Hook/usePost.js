@@ -1,36 +1,45 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { API_URL } from '../Config/EnvConfig';
 import { useMemo } from 'react';
 
-// Get the auth token (if needed, add it to headers in axios calls)
 const getToken = () => localStorage.getItem('token');
 
 const fetchPosts = async () => {
   const response = await axios.get(`${API_URL}/post/bug`);
-  return response.data;
+  return response.data.reverse();
 };
 
-const fetchuser = async (userId) => {
+const createPost = async (postData) => {
   const token = getToken();
-  const response = await axios.get(`${API_URL}/user/${userId}`, {
-    headers: { Authorization: `Bearer ${token}` },
+  const response = await axios.post(`${API_URL}/post/createpost`, postData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
   return response.data;
 };
+
 export function usePost() {
+  const queryClient = useQueryClient();
+
   const PostQuery = useQuery({
     queryKey: ['posts'],
     queryFn: fetchPosts,
     refetchOnWindowFocus: false,
     retry: 1,
-    staleTime: 300000, // 5 minutes
+    staleTime: 300000,
+  });
+
+  const creatPostMutation = useMutation({
+    mutationFn: createPost,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+    },
   });
 
   const post = PostQuery.data;
 
-  // Defensive: check if post.data is array, or post is array directly
-  // Adjust depending on your API response shape
   const postdata = useMemo(() => {
     if (!post) return [];
     const dataArray = Array.isArray(post) ? post : post.data;
@@ -54,6 +63,7 @@ export function usePost() {
 
   return {
     postdata,
+    createPostMutation: creatPostMutation.mutate,
     isLoading: PostQuery.isLoading,
     isError: PostQuery.isError,
     error: PostQuery.error,

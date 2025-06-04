@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
+import { API_URL } from '../Config/EnvConfig.js';
 
 const AuthContext = createContext();
 
@@ -53,7 +54,7 @@ export function AuthProvider({ children }) {
     setError(null);
     try {
       const response = await axios.post(
-        'http://localhost:3000/api/auth/login',
+        `${API_URL}/auth/login`,
         { identifier, password },
         { withCredentials: true }
       );
