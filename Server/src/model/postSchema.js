@@ -5,10 +5,13 @@ const postSchema = new mongoose.Schema(
   {
     title: {
       type: String,
-      maxlength: 50,
       required: false,
     },
     description: {
+      type: String,
+      required: false,
+    },
+    installation: {
       type: String,
       required: false,
     },
@@ -39,6 +42,10 @@ const postSchema = new mongoose.Schema(
     updatedAt: {
       type: Date,
       default: Date.now,
+    },
+    resolution: {
+      type: String,
+      required: false,
     },
     suggestedResolutions: [],
     comment: [

@@ -2,14 +2,13 @@ import { uploadFileToAI, generateContentFromFile } from '../model/aiModel.js';
 
 const processImageWithAI = async (file) => {
   try {
-    // Upload file to Google GenAI
-    const uploadedFile = await uploadFileToAI(file.path, file.mimetype);
+    console.log('Processing file:', file.path);
 
-    // Generate content using the uploaded file
-    const aiResponse = await generateContentFromFile(
-      uploadedFile.uri,
-      uploadedFile.mimeType
-    );
+    // Upload file to prepare for AI processing
+    const fileData = await uploadFileToAI(file.path, file.mimetype);
+
+    // Generate content using the file data
+    const aiResponse = await generateContentFromFile(fileData, file.mimetype);
 
     return {
       image: {
@@ -20,6 +19,7 @@ const processImageWithAI = async (file) => {
       aiResponse,
     };
   } catch (error) {
+    console.error('Error in processImageWithAI:', error);
     throw new Error(`AI processing failed: ${error.message}`);
   }
 };

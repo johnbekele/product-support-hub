@@ -15,8 +15,16 @@ const getPosts = async (req, res) => {
 
 const addPost = async (req, res) => {
   try {
-    const { title, description, product, type, severity, status, resolution } =
-      req.body;
+    const {
+      title,
+      installation,
+      description,
+      product,
+      type,
+      severity,
+      status,
+      resolution,
+    } = req.body;
     const username = req.user.username;
 
     console.log(req.body);
@@ -29,7 +37,8 @@ const addPost = async (req, res) => {
       !type ||
       !severity ||
       !status ||
-      !resolution
+      !resolution ||
+      !installation
     ) {
       return res
         .status(400)
@@ -41,6 +50,7 @@ const addPost = async (req, res) => {
       title,
       description,
       product,
+      installation,
       type,
       severity,
       status,
@@ -64,13 +74,19 @@ const addPost = async (req, res) => {
 const postResolution = async (req, res) => {
   const { postId } = req.params;
   const { resolution } = req.body;
+
   try {
+    console.log(req.body);
     const post = await Post.findById(postId);
+
     if (!post) {
       return res.status(404).json({ message: 'Post not found' });
     }
+
+    // Set the resolution field
     post.resolution = resolution;
     await post.save();
+
     return res.status(200).json(post);
   } catch (error) {
     console.error(error);
