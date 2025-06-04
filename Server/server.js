@@ -40,10 +40,10 @@ app.use(
     origin: isDevelopment
       ? ['http://127.0.0.1:5173', 'http://localhost:5173']
       : [
-          'https://bookapis.zapto.org',
+          'https://product-support-hub.onrender.com',
           'http://localhost:5173',
           'http://127.0.0.1:5173',
-          'https://book-and-memories.vercel.app',
+          'https://product-support-hub.vercel.app',
         ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
