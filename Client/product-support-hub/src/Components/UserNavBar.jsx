@@ -17,7 +17,7 @@ import logo from '../assets/img/logo.png';
 import { useThomsonReutersTheme } from '../Context/ThomsonReutersThemeContext';
 import { useAuth } from '../Context/AuthContext';
 import ChatBox from './ChatBox';
-
+import DeveloperAttribution from './DeveloperAttribution';
 /**
  * UserNavBar Component
  *
@@ -469,6 +469,7 @@ function UserNavBar() {
         onClose={() => setChatOpen(false)}
         theme={theme}
       />
+      <DeveloperAttribution />
     </>
   );
 }

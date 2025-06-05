@@ -1,15 +1,67 @@
-// ChatMessages.jsx
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { DocumentIcon, PhotoIcon } from '@heroicons/react/24/outline';
+import { useBugContext } from '../Context/BugContext'; // Make sure path is correct
 
-function ChatMessages({ messages, theme }) {
+function ChatMessages({ messages, theme, handlefoundid }) {
   const messagesEndRef = useRef(null);
+  const [bug, setBug] = useState();
+  const { setSelectedBugId } = useBugContext();
+
+  // Store the latest bug info from messages
+  const [currentBugInfo, setCurrentBugInfo] = useState(null);
 
   // Auto-scroll to bottom when messages update
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+
+    // Extract bug info from latest message if available
+    const latestMessage = messages[messages.length - 1];
+    if (latestMessage && latestMessage.bugInfo) {
+      setCurrentBugInfo(latestMessage.bugInfo);
+    }
   }, [messages]);
+
+  // Process bug info when it changes
+  useEffect(() => {
+    if (!currentBugInfo) return;
+
+    // Process the bug info to extract bug ID
+    const processBugInfo = () => {
+      // Handle raw text case
+      if (currentBugInfo.rawText) {
+        return;
+      }
+
+      // Extract bugs from the structure
+      const bugs = currentBugInfo.aiResponse
+        ? Array.isArray(currentBugInfo.aiResponse)
+          ? currentBugInfo.aiResponse
+          : [currentBugInfo.aiResponse]
+        : Array.isArray(currentBugInfo)
+        ? currentBugInfo
+        : [currentBugInfo];
+
+      // If we have bugs with IDs, use the first one
+      if (bugs && bugs.length > 0 && bugs[0].id) {
+        const bugId = bugs[0].id;
+        console.log('Found bug ID:', bugId);
+
+        // Update the context
+        setSelectedBugId(bugId);
+
+        // Call the callback if provided
+        if (handlefoundid) {
+          handlefoundid(bugId);
+        }
+
+        // Update local state if needed
+        setBug(bugs[0]);
+      }
+    };
+
+    processBugInfo();
+  }, [currentBugInfo, handlefoundid, setSelectedBugId]);
 
   /**
    * Renders a file attachment based on file type
@@ -46,12 +98,10 @@ function ChatMessages({ messages, theme }) {
   /**
    * Renders bug information from AI processing
    * @param {Object} bugInfo - Bug information from AI
-   *
-   *
    */
-
   const renderBugInfo = (bugInfo) => {
     console.log('Rendering bug info:', bugInfo);
+
     // Handle the case where we have raw text instead of JSON
     if (bugInfo.rawText) {
       return (
@@ -74,7 +124,16 @@ function ChatMessages({ messages, theme }) {
     return (
       <div className="bug-info p-3 bg-gray-50 rounded-lg border border-gray-200 mt-2">
         {bugs.map((bug, index) => (
-          <div key={index} className="bug-item mb-3 last:mb-0">
+          <div
+            key={index}
+            className="bug-item mb-3 last:mb-0 cursor-pointer hover:bg-gray-100"
+            onClick={() => {
+              if (bug.id) {
+                setSelectedBugId(bug.id);
+                if (handlefoundid) handlefoundid(bug.id);
+              }
+            }}
+          >
             <p className="font-medium text-sm">{bug.title || 'Bug Details'}</p>
 
             <div className="bug-details text-xs space-y-1 mt-1">

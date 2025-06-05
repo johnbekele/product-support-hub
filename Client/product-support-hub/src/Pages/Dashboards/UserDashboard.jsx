@@ -1,16 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useThomsonReutersTheme } from '../../Context/ThomsonReutersThemeContext';
 import BugSearchBar from '../../Components/BugSearchBar';
 import BugFeedPage from '../../Components/BugFeedPage';
-import { usePost } from '../../Hook/usePost';
-import AddPostForm from '../../Components/AddPostForm';
+import { useBugContext } from '../../Context/BugContext';
+
 function UserDashboard() {
   const theme = useThomsonReutersTheme();
   const [iscreatePost, setIsCreatePost] = React.useState(false);
+  const { selectedBugId } = useBugContext();
+  // State for search and filters
+  const [searchTerm, setSearchTerm] = React.useState('');
+  const [filters, setFilters] = React.useState({
+    product: '',
+    bugType: '',
+    status: '',
+    severity: '',
+    assignee: '',
+    dateRange: 'all',
+    id: null,
+  });
 
-  const handlePost = () => {
-    setIsCreatePost(!iscreatePost);
-  };
+  // Handlers for search and filter updates
+  const handleSearch = (newSearchTerm) => setSearchTerm(newSearchTerm);
+  const handleFilterChange = (newFilters) => setFilters(newFilters);
+  const handlePost = () => setIsCreatePost(!iscreatePost);
 
   const bodyStyle = {
     backgroundColor: theme.components.body.backgroundColor,
@@ -18,20 +31,34 @@ function UserDashboard() {
     padding: theme.spacing.lg,
   };
 
-  const buttonStyle = {
-    backgroundColor: theme.components.button.primary.backgroundColor,
-    color: theme.components.button.primary.color,
-    padding: `${theme.spacing.sm} ${theme.spacing.md}`,
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-  };
+  // Update filters when selectedBugId changes
+  useEffect(() => {
+    if (selectedBugId) {
+      // Update filters with the new bug ID
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+        id: selectedBugId,
+      }));
+
+      // Optionally, you can also set the search term to the bug ID
+      setSearchTerm(selectedBugId.toString());
+    }
+  }, [selectedBugId]);
 
   return (
-    <div>
-      <div className="">
-        <BugSearchBar />
-        <BugFeedPage />
+    <div style={bodyStyle}>
+      <div>
+        <BugSearchBar
+          searchTerm={searchTerm}
+          onSearchChange={handleSearch}
+          filters={filters}
+          onFilterChange={handleFilterChange}
+        />
+        <BugFeedPage
+          searchTerm={searchTerm}
+          filters={filters}
+          selectedBugId={selectedBugId}
+        />
       </div>
     </div>
   );

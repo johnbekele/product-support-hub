@@ -7,42 +7,27 @@ import {
   FaRobot,
 } from 'react-icons/fa';
 
-function BugSearchBar() {
-  const [searchTerm, setSearchTerm] = useState('');
+function BugSearchBar({ searchTerm, onSearchChange, filters, onFilterChange }) {
   const [showFilters, setShowFilters] = useState(false);
-  const [filters, setFilters] = useState({
-    product: '',
-    bugType: '',
-    status: '',
-    severity: '',
-    assignee: '',
-    dateRange: 'all',
-  });
   const [isAiSearching, setIsAiSearching] = useState(false);
 
   const handleSearch = (e) => {
     e.preventDefault();
     console.log('Searching for:', searchTerm, 'with filters:', filters);
-    // Implement your search logic here
   };
 
   const handleAiSearch = () => {
     setIsAiSearching(true);
-    console.log('AI searching for:', searchTerm, 'with filters:', filters);
-    // Implement your AI search logic here
-
     // Simulate AI processing time
-    setTimeout(() => {
-      setIsAiSearching(false);
-    }, 2000);
+    setTimeout(() => setIsAiSearching(false), 2000);
   };
 
   const updateFilter = (key, value) => {
-    setFilters({ ...filters, [key]: value });
+    onFilterChange({ ...filters, [key]: value });
   };
 
   const resetFilters = () => {
-    setFilters({
+    onFilterChange({
       product: '',
       bugType: '',
       status: '',
@@ -52,20 +37,16 @@ function BugSearchBar() {
     });
   };
 
-  const countAppliedFilters = () => {
-    return Object.values(filters).filter(
-      (value) => value !== '' && value !== 'all'
-    ).length;
-  };
-
-  const appliedFilters = countAppliedFilters();
+  // Count active filters for badge display
+  const appliedFilters = Object.values(filters).filter(
+    (value) => value !== '' && value !== 'all'
+  ).length;
 
   return (
     <div className="bg-white shadow-md rounded-lg p-4 mb-6">
-      {/* Main search bar */}
       <form onSubmit={handleSearch} className="flex flex-col gap-4">
         <div className="flex flex-col md:flex-row gap-3">
-          {/* Search input */}
+          {/* Search input field */}
           <div className="relative flex-grow">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <FaSearch className="text-gray-400" />
@@ -74,7 +55,7 @@ function BugSearchBar() {
               type="text"
               placeholder="Search for bugs by ID, title, or keywords..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => onSearchChange(e.target.value)}
               className="pl-10 pr-4 py-3 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
             <button
@@ -105,7 +86,6 @@ function BugSearchBar() {
             <button
               type="button"
               onClick={handleAiSearch}
-              // disabled={isAiSearching || !searchTerm.trim()}
               className={`flex items-center justify-center px-4 py-3 rounded-lg transition-colors ${
                 isAiSearching || !searchTerm.trim()
                   ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
@@ -154,7 +134,7 @@ function BugSearchBar() {
           </div>
         </div>
 
-        {/* Filters section */}
+        {/* Advanced filters panel */}
         {showFilters && (
           <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 animate-fadeIn mt-3">
             <div className="flex justify-between items-center mb-3">
@@ -180,9 +160,14 @@ function BugSearchBar() {
                   className="w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">All Products</option>
-                  <option value="dapa">DAPA</option>
+                  <option value="dapa">Account Production Advance </option>
                   <option value="cosec">COsec</option>
-                  <option value="dpm">DPM</option>
+                  <option value="Practice Management">
+                    Practice Management
+                  </option>
+                  <option value="DVO">DVO</option>
+                  <option value="UserPortal">UserPortal</option>
+                  <option value="Virtual office">Virtual office</option>
                 </select>
               </div>
 
@@ -202,6 +187,8 @@ function BugSearchBar() {
                   <option value="license">License</option>
                   <option value="ui">UI/UX</option>
                   <option value="performance">Performance</option>
+                  <option value="Integration">Integration</option>
+                  <option value="Data Base Issue">Data Base Issue</option>
                 </select>
               </div>
 
@@ -216,10 +203,10 @@ function BugSearchBar() {
                   className="w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">Any Status</option>
-                  <option value="open">Open</option>
-                  <option value="in-progress">In Progress</option>
-                  <option value="resolved">Resolved</option>
-                  <option value="closed">Closed</option>
+                  <option value="Open">Open</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Resolved">Resolved</option>
+                  <option value="Closed">Closed</option>
                 </select>
               </div>
 
@@ -234,10 +221,10 @@ function BugSearchBar() {
                   className="w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">Any Severity</option>
-                  <option value="critical">Critical</option>
-                  <option value="high">High</option>
-                  <option value="medium">Medium</option>
-                  <option value="low">Low</option>
+                  <option value="Critical">Critical</option>
+                  <option value="High">High</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Low">Low</option>
                 </select>
               </div>
 

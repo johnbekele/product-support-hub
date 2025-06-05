@@ -8,6 +8,7 @@ import ChatInput from './ChatInput';
 function ChatBox({ isOpen, onClose, theme }) {
   const chatBoxRef = useRef(null);
   const dragControls = useDragControls();
+  const [foundid, setFoundId] = useState();
 
   // State for chat width
   const [chatWidth, setChatWidth] = useState(384); // Default width (96 * 4 = 384px)
