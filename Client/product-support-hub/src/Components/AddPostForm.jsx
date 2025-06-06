@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { usePost } from '../Hook/usePost';
+import { useNavigate } from 'react-router-dom';
 
 const AddPostForm = () => {
   const { createPostMutation, isError, isLoading } = usePost();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -34,7 +36,13 @@ const AddPostForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    createPostMutation(formData);
+    try {
+      createPostMutation(formData);
+      alert('Bug Post created successfully go to post to check you post ');
+      navigate('/');
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (

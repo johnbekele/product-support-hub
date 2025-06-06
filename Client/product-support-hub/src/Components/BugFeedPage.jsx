@@ -40,7 +40,7 @@ function BugFeedPage({ searchTerm, filters }) {
 
   // Clear selected bug function
   const clearSelectedBug = () => {
-    setSelectedBugId(null);
+    setSelectedBugId('');
   };
 
   // Helper functions for filtering

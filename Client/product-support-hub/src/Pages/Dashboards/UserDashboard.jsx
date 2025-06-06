@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+
 import { useThomsonReutersTheme } from '../../Context/ThomsonReutersThemeContext';
 import BugSearchBar from '../../Components/BugSearchBar';
 import BugFeedPage from '../../Components/BugFeedPage';
@@ -17,7 +18,7 @@ function UserDashboard() {
     severity: '',
     assignee: '',
     dateRange: 'all',
-    id: null,
+    id: '',
   });
 
   // Handlers for search and filter updates

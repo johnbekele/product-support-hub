@@ -177,9 +177,9 @@ function UserNavBar() {
           >
             <img className="w-44" src={logo} alt="Thomson Reuters Logo" />
           </div>
-          <div className="text-md font-sans text-stone-50">
+          <Link to="/" className="text-md font-sans text-stone-50">
             Product Support Hub
-          </div>
+          </Link>
         </div>
 
         {/* Navigation and Controls Section */}

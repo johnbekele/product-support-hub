@@ -68,7 +68,7 @@ const generateContentFromFile = async (fileData, mimeType) => {
     };
 
     // Create the prompt using the bugData from the fileData object
-    const prompt = `Use this ${fileData.bugData} data and respond ONLY with a valid JSON array containing the id, title, description, product, type, status, and resolution of a bug found in the image. Do not include any explanatory text outside the JSON.`;
+    const prompt = `Use this ${fileData.bugData} data and respond ONLY with a valid JSON array containing the id, title, description, product, type, status, and resolution of a bug found in the image. Do not include any explanatory text outside the JSON.also please if you don't find the bug in the list responde with bug not found `;
 
     // Generate content
     const result = await model.generateContent({
