@@ -20,6 +20,16 @@ const createPost = async (postData) => {
   return response.data;
 };
 
+const deletePost = async (postId) => {
+  const token = getToken();
+  const response = await axios.delete(`${API_URL}/post/deletepost/${postId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
 export function usePost() {
   const queryClient = useQueryClient();
 
@@ -33,6 +43,13 @@ export function usePost() {
 
   const creatPostMutation = useMutation({
     mutationFn: createPost,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+    },
+  });
+
+  const deletePostMutation = useMutation({
+    mutationFn: deletePost,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
     },
@@ -63,7 +80,8 @@ export function usePost() {
 
   return {
     postdata,
-    createPostMutation: creatPostMutation.mutate,
+    createPost: creatPostMutation.mutate,
+    deletePost: deletePostMutation.mutate,
     isLoading: PostQuery.isLoading,
     isError: PostQuery.isError,
     error: PostQuery.error,

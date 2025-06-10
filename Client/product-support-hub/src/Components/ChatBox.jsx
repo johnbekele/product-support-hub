@@ -1,30 +1,26 @@
-// ChatBox.jsx
+// ChatBox.jsx - A resizable chat interface component with messaging functionality
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence, useDragControls } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import ChatHeader from './ChatHeader';
 import ChatMessages from './ChatMessages';
 import ChatInput from './ChatInput';
 
 function ChatBox({ isOpen, onClose, theme }) {
   const chatBoxRef = useRef(null);
-  const dragControls = useDragControls();
-  const [foundid, setFoundId] = useState();
-
-  // State for chat width
-  const [chatWidth, setChatWidth] = useState(384); // Default width (96 * 4 = 384px)
   const [isDragging, setIsDragging] = useState(false);
 
-  // Min and max width constraints
+  // Chat configuration
   const MIN_WIDTH = 300;
   const MAX_WIDTH = 600;
+  const [chatWidth, setChatWidth] = useState(384);
 
-  // State for chat messages
+  // Chat messages state
   const [messages, setMessages] = useState([
     { id: 1, text: 'Hello! How can I help you today?', sender: 'bot' },
     { id: 2, text: 'Welcome to Product Support Hub', sender: 'bot' },
   ]);
 
-  // Handle clicks outside the chat box to close it
+  // Close chat when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -38,47 +34,23 @@ function ChatBox({ isOpen, onClose, theme }) {
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen, onClose, isDragging]);
 
-  // Handle drag to resize
-  const handleDragStart = () => {
-    setIsDragging(true);
-  };
+  // Handle resize drag events
+  const handleDragStart = () => setIsDragging(true);
+  const handleDragEnd = () => setIsDragging(false);
 
-  const handleDrag = (event, info) => {
-    // Calculate new width by subtracting drag delta from current width
-    const newWidth = chatWidth - info.delta.x;
-
-    // Apply constraints
-    if (newWidth >= MIN_WIDTH && newWidth <= MAX_WIDTH) {
-      setChatWidth(newWidth);
-    }
-  };
-
-  const handleDragEnd = () => {
-    setIsDragging(false);
-  };
-
-  /**
-   * Handles sending a new text message
-   * @param {string} messageText - The message text to send
-   */
+  // Send a text message
   const handleSendMessage = (messageText) => {
     if (messageText.trim()) {
       // Add user message
       setMessages([
         ...messages,
-        {
-          id: Date.now(),
-          text: messageText,
-          sender: 'user',
-        },
+        { id: Date.now(), text: messageText, sender: 'user' },
       ]);
 
-      // Simulate bot response after a short delay
+      // Simulate bot response
       setTimeout(() => {
         setMessages((prev) => [
           ...prev,
@@ -92,13 +64,9 @@ function ChatBox({ isOpen, onClose, theme }) {
     }
   };
 
-  /**
-   * Handles sending a file with AI processing results
-   * @param {Object} processingData - Contains the AI result and file info
-   * @param {string} caption - Optional caption for the file
-   */
+  // Send a file with AI processing results
   const handleSendProcessedFile = (processingData, caption = '') => {
-    // Add user message with file and AI results
+    // Add user message with file
     setMessages([
       ...messages,
       {
@@ -115,10 +83,7 @@ function ChatBox({ isOpen, onClose, theme }) {
       },
     ]);
 
-    // Extract bug information from AI results
-    const bugInfo = processingData.result;
-
-    // Create a response message with the AI analysis
+    // Simulate AI response
     setTimeout(() => {
       setMessages((prev) => [
         ...prev,
@@ -126,13 +91,13 @@ function ChatBox({ isOpen, onClose, theme }) {
           id: Date.now() + 1,
           text: "I've analyzed your screenshot and found the following bug information:",
           sender: 'bot',
-          bugInfo: bugInfo,
+          bugInfo: processingData.result,
         },
       ]);
     }, 1000);
   };
 
-  // Styling based on theme
+  // Theme-based styling
   const chatBoxStyle = {
     backgroundColor: theme.colors.white,
     color: theme.colors.black,
@@ -166,7 +131,6 @@ function ChatBox({ isOpen, onClose, theme }) {
               e.preventDefault();
               handleDragStart();
 
-              // Set up drag handlers
               const onMouseMove = (moveEvent) => {
                 const deltaX = moveEvent.clientX - e.clientX;
                 const newWidth = chatWidth - deltaX;

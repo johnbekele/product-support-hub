@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { usePost } from '../Hook/usePost';
 import { useNavigate } from 'react-router-dom';
+import { useImageProcessing } from '../Hook/useImageProcessing.js';
 
 const AddPostForm = () => {
   const { createPostMutation, isError, isLoading } = usePost();
+  const [image, setImage] = useState(null);
+  const { processOCRImage } = useImageProcessing();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: '',
@@ -44,6 +47,58 @@ const AddPostForm = () => {
       console.log(err);
     }
   };
+
+  //handle copy paste
+
+  // Listen for paste events globally
+  useEffect(() => {
+    const handlePaste = (e) => {
+      // Check if clipboard contains image data
+      const items = e.clipboardData?.items;
+      if (!items) return;
+
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf('image') !== -1) {
+          // Get the image as a file
+          const file = items[i].getAsFile();
+          if (!file) continue;
+
+          // Set the image file
+          setImage(file);
+
+          processOCRImage(file)
+            .then((data) => {
+              // Populate form fields with OCR data
+              console.log('OCR Data:', data.text);
+              setFormData((prevData) => ({
+                title: data.text || '',
+                description: data.description || '',
+              }));
+            })
+            .catch((error) => {
+              console.error('Error processing image:', error);
+              alert('Failed to process image. Please try again.');
+            });
+
+          const notification = document.createElement('div');
+          notification.className =
+            'fixed top-4 right-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-md z-50';
+          notification.innerHTML =
+            '<p>Image pasted! Click "Process Image" to analyze it.</p>';
+          document.body.appendChild(notification);
+
+          setTimeout(() => {
+            notification.remove();
+          }, 3000);
+
+          break;
+        }
+      }
+    };
+
+    window.addEventListener('paste', handlePaste);
+    return () => window.removeEventListener('paste', handlePaste);
+  }, []);
 
   return (
     <div className="p-6">

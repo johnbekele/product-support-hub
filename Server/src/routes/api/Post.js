@@ -7,4 +7,5 @@ const router = express.Router();
 router.get('/bug', post.getPosts);
 router.post('/createpost', verifyJWT, post.addPost);
 router.post('/resolution/:postId', verifyJWT, post.postResolution);
+router.delete('/deletepost/:postId', verifyJWT, post.deletePost);
 export default router;

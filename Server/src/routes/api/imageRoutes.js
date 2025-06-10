@@ -1,6 +1,7 @@
 import express from 'express';
 import imageController from '../../controllers/imageController.js';
-import { uploadToDisk } from '../../config/multerConfig.js';
+import { uploadToDisk, uploadToMemory } from '../../config/multerConfig.js';
+import worker from '../../middleware/Worker.js';
 
 const router = express.Router();
 
@@ -10,5 +11,7 @@ router.post(
   uploadToDisk.single('image'),
   imageController.processImage
 );
+
+router.post('/image-ocr', uploadToMemory.single('image'), worker);
 
 export default router;

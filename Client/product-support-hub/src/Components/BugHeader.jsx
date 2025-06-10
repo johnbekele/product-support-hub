@@ -6,8 +6,14 @@ import {
   getStatusIcon,
   formatDate,
 } from '../utils/bugHelpers';
+import { useAuth } from '../Context/AuthContext';
+import { usePost } from '../Hook/usePost';
 
 function BugHeader({ bug, onClick }) {
+  const { user } = useAuth();
+  const currentUser = user?.username || 'Unknown User';
+  const [buttonText, setButtonText] = React.useState('...');
+  const { deletePost } = usePost();
   return (
     <div className="p-5 cursor-pointer" onClick={onClick}>
       <div className="flex justify-between items-start">
@@ -43,6 +49,21 @@ function BugHeader({ bug, onClick }) {
           >
             {bug.status}
           </span>
+          {currentUser === bug.createdBy && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                deletePost(bug.id);
+              }}
+              onMouseEnter={() => {
+                setButtonText('delete');
+              }}
+              onMouseLeave={() => setButtonText('...')}
+              className={`text-sm font-medium mb-1.5 `}
+            >
+              {buttonText}
+            </button>
+          )}
         </div>
       </div>
 
@@ -51,7 +72,7 @@ function BugHeader({ bug, onClick }) {
       <div className="flex justify-between items-center mt-4 text-sm text-gray-500">
         <div className="flex items-center space-x-2">
           <FaUser className="text-gray-400" />
-          <span>{bug.createdBy}</span>
+          <span>{currentUser == bug.createdBy ? 'You' : bug.createdBy}</span>
         </div>
         <div className="flex items-center space-x-2">
           <FaRegClock className="text-gray-400" />
