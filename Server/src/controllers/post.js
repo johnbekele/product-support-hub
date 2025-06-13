@@ -94,6 +94,31 @@ const postResolution = async (req, res) => {
   }
 };
 
+const suggestedResolutions = async (req, res) => {
+  const { postId } = req.params;
+  const { suggestedResolutions } = req.body;
+
+  try {
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    // Add suggested resolutions
+    post.suggestedResolutions.push(...suggestedResolutions);
+    await post.save();
+    // Emit event to notify other users
+    req.app.get('io').emit('suggestedResolutions', {
+      postId,
+      suggestedResolutions: post.suggestedResolutions,
+    });
+    return res.status(200).json(post);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Server error' });
+  }
+};
+
 const deletePost = async (req, res) => {
   const { postId } = req.params;
 

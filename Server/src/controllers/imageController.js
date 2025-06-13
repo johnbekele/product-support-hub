@@ -1,4 +1,8 @@
-import { processImageWithAI } from '../services/aiService.js';
+import {
+  processImageWithAI,
+  processResolutionEmail,
+} from '../services/aiService.js';
+import Post from '../model/postSchema.js';
 
 const processImage = async (req, res, next) => {
   try {
@@ -26,4 +30,42 @@ const processImage = async (req, res, next) => {
   }
 };
 
-export default { processImage };
+const generateEmail = async (req, res) => {
+  const { bugid } = req.params;
+  try {
+    //fetch bug data
+    const post = await Post.findById(bugid);
+    if (!post) {
+      return res.status(404).json({
+        error: true,
+        message: 'Bug not found',
+      });
+    }
+    if (!post.resolution) {
+      return res.status(400).json({
+        error: true,
+        message: 'No resolution available for this bug',
+      });
+    }
+    const postData = {
+      title: post.title,
+      description: post.description,
+      resolution: post.resolution || '',
+    };
+
+    const result = await processResolutionEmail(postData);
+    res.status(200).json({
+      error: false,
+      ...result,
+      message: 'Email generated successfully',
+    });
+  } catch (error) {
+    console.error('Error fetching bug data:', error);
+    return res.status(500).json({
+      error: true,
+      message: 'Internal server error',
+    });
+  }
+};
+
+export default { processImage, generateEmail };

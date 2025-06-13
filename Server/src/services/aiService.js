@@ -1,4 +1,8 @@
-import { uploadFileToAI, generateContentFromFile } from '../model/aiModel.js';
+import {
+  uploadFileToAI,
+  generateContentFromFile,
+  generateResolutionEmail,
+} from '../model/aiModel.js';
 
 const processImageWithAI = async (file) => {
   try {
@@ -24,4 +28,23 @@ const processImageWithAI = async (file) => {
   }
 };
 
-export { processImageWithAI };
+const processResolutionEmail = async (resInfo) => {
+  try {
+    console.log('Generating resolution email for:', resInfo.title);
+
+    // Generate a professional email response for the bug resolution
+    const emailContent = await generateResolutionEmail(resInfo);
+
+    return {
+      email: {
+        subject: `Resolution for Bug: ${resInfo.title}`,
+        body: emailContent,
+      },
+    };
+  } catch (error) {
+    console.error('Error in processResolutionEmail:', error);
+    throw new Error(`Email generation failed: ${error.message}`);
+  }
+};
+
+export { processImageWithAI, processResolutionEmail };
