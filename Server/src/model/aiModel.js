@@ -5,6 +5,7 @@ import MOCK_BUGS from '../mokeData/data.js';
 import Post from './postSchema.js';
 import mongoose from 'mongoose';
 import cleanGeminiResponse from '../script/cleanGeminiResponse.js';
+import Content from './contentModel.js';
 
 dotenv.config();
 
@@ -179,4 +180,71 @@ Please write a clean email with a professional tone and focus on
   }
 };
 
-export { uploadFileToAI, generateContentFromFile, generateResolutionEmail };
+// test the AI model with a sample data
+
+const testAiModel = async (question) => {
+  try {
+    const data = await Content.find();
+
+    if (!data || data.length === 0) {
+      console.warn('No content found in the database');
+      return;
+    }
+
+    const readyData = data.map((item) => ({
+      product: item.path.match(/DIGITA\/([^/]+)/)
+        ? item.path.match(/DIGITA\/([^/]+)/)[1]
+        : 'Unknown',
+      title: item.title || 'Untitled',
+      description: item.content || 'No description available',
+      type: 'Wiki',
+      status: 'Imported',
+    }));
+
+    // console.log('Ready data for AI model:', readyData);
+
+    const bugData = JSON.stringify(readyData, null, 2); // pretty print for readability
+
+    const prompt = `Here is a dataset of wiki content:\n\n${bugData}\n\ngive me :\n  ${question} \n\nRespond with a valid JSON array containing the product, title, and description of the bug found in the dataset. Do not include any explanatory text outside the JSON. If you don't find the bug in the list, respond with "bug not found".`;
+
+    // Generate response (text only)
+    const result = await model.generateContent({
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+    });
+
+    const response = result.response;
+    const text = response.text();
+    try {
+      // Try to parse the text as JSON
+      return JSON.parse(text);
+    } catch (jsonError) {
+      console.error('Failed to parse as JSON:', jsonError);
+
+      // Try to extract JSON from the text
+      const jsonMatch = text.match(/\[\s*\{.*\}\s*\]/s);
+      if (jsonMatch) {
+        try {
+          const jsonResponse = JSON.parse(jsonMatch[0]);
+          console.log('Extracted JSON successfully');
+          return jsonResponse;
+        } catch (extractError) {
+          console.error('Failed to parse extracted JSON:', extractError);
+          return { rawText: text };
+        }
+      } else {
+        // If we can't extract JSON, just return the text
+        return { rawText: text };
+      }
+    }
+  } catch (error) {
+    console.error('Error testing AI model:', error);
+    throw new Error(`AI model test failed: ${error.message}`);
+  }
+};
+
+export {
+  uploadFileToAI,
+  generateContentFromFile,
+  generateResolutionEmail,
+  testAiModel,
+};

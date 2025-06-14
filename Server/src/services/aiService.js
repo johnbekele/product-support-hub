@@ -2,6 +2,7 @@ import {
   uploadFileToAI,
   generateContentFromFile,
   generateResolutionEmail,
+  testAiModel,
 } from '../model/aiModel.js';
 
 const processImageWithAI = async (file) => {
@@ -47,4 +48,23 @@ const processResolutionEmail = async (resInfo) => {
   }
 };
 
-export { processImageWithAI, processResolutionEmail };
+const processAiTest = async (question) => {
+  try {
+    console.log('Testing AI model...');
+
+    // Test the AI model with a sample input
+    const result = await testAiModel(question);
+
+    return {
+      testresponse: {
+        message: 'AI model test successful',
+        data: result,
+      },
+    };
+  } catch (error) {
+    console.error('Error in processAiTest:', error);
+    throw new Error(`AI model test failed: ${error.message}`);
+  }
+};
+
+export { processImageWithAI, processResolutionEmail, processAiTest };
