@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useImageProcessing } from '../Hook/useImageProcessing.js';
 
 const AddPostForm = () => {
-  const { createPostMutation, isError, isLoading } = usePost();
+  const { createPost, isError, isLoading } = usePost();
   const [image, setImage] = useState(null);
   const { processOCRImage } = useImageProcessing();
   const navigate = useNavigate();
@@ -40,7 +40,7 @@ const AddPostForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     try {
-      createPostMutation(formData);
+      createPost(formData);
       alert('Bug Post created successfully go to post to check you post ');
       navigate('/');
     } catch (err) {
