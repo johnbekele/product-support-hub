@@ -14,6 +14,7 @@ import configureSocket from './src/config/socket.js';
 import passport from 'passport';
 import configurePassport from './src/config/passportConfig.js';
 import imageRoutes from './src/routes/api/imageRoutes.js';
+import WikiRoutes from './src/routes/api/WikiRoutes.js';
 import { setupUploadDirectory } from './src/utils/fileUtils.js';
 import errorHandler from './src/middleware/errorHandler.js';
 
@@ -78,6 +79,7 @@ app.use('/api/auth', Auth);
 app.use('/api/post', Post);
 app.use('/api/comment', Comment);
 app.use('/api/image', imageRoutes);
+app.use('/api/wiki', WikiRoutes);
 
 // Global error handler
 app.use((err, req, res, next) => {

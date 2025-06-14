@@ -1,0 +1,16 @@
+ˇ†¨¨¨¨¨ure details
+rg = "tr-tax-default"
+project = "TAP UK Support"
+wiki_id = "TAP-UK-Support.wiki"
+page_id = 1  # You can test with a valid ID
+
+# Perso	nal Access Token (replace with your real one)
+pat = "EtR07AMbqmHUHLCqpExG3kqKK6HfVPAkJfgbDtjxZzLCnUmbUQpwJQQJ99BFACAAAAADXeeUAAASAZDO24BS"
+
+# Prepare headers
+token = base64.b64encode(f":{pat}".encode("utf-8")).decode("utf-8")
+headers = {
+    "Authorization": f"Basic {token}"
+}
+
+# Construct
