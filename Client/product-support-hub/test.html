@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Email Formatter</title>
+    <style>
+      #emailContent {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
+        font-family: Arial, sans-serif;
+      }
+      button {
+        padding: 5px 10px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="emailContent">
+      <p>Dear <strong>John Doe</strong>,</p>
+      <p>
+        This email addresses the database connection error you reported,
+        specifically:
+      </p>
+      <p>
+        <em
+          >An error has occurred while accessing the database: Invalid
+          connection string attribute or unable to connect to database</em
+        >
+        while accessing your Digita programs.
+      </p>
+      <p>
+        This issue typically arises when the SQL Server service responsible for
+        database communication isn't running.
+      </p>
+      <p>
+        The most effective initial solution is to reboot the machine hosting the
+        SQL Server database software. This usually restarts the required service
+        automatically.
+      </p>
+      <p>
+        Please attempt this restart and confirm if the issue is resolved. If the
+        problem persists after the reboot, please reply to this email so we can
+        further investigate and assist you.
+      </p>
+      <p>Sincerely,<br /><strong>Support Team</strong></p>
+    </div>
+
+    <button onclick="copyToClipboard()">Copy to Clipboard</button>
+
+    <script>
+      function copyToClipboard() {
+        const emailContent = document.getElementById('emailContent').innerHTML;
+        const tempElement = document.createElement('textarea');
+        tempElement.value = emailContent;
+        document.body.appendChild(tempElement);
+        tempElement.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempElement);
+        alert('Email content copied to clipboard!');
+      }
+    </script>
+  </body>
+</html>

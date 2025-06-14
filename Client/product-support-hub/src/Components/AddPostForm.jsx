@@ -72,7 +72,7 @@ const AddPostForm = () => {
               console.log('OCR Data:', data.text);
               setFormData((prevData) => ({
                 title: data.text || '',
-                description: data.description || '',
+                description: data.text || '',
               }));
             })
             .catch((error) => {
@@ -251,7 +251,7 @@ const AddPostForm = () => {
             name="resolution"
             value={formData.resolution}
             onChange={handleChange}
-            required
+            // required
             rows="2"
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />

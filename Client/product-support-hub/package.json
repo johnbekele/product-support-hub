@@ -23,6 +23,7 @@
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
     "framer-motion": "^12.7.3",
+    "html-react-parser": "^5.2.5",
     "i": "^0.3.7",
     "jwt-decode": "^4.0.0",
     "lottie-react": "^2.4.1",

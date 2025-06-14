@@ -3,6 +3,7 @@ import React from 'react';
 import ResolutionSection from './ResolutionSection';
 import SuggestedResolutions from './SuggestedResolutions';
 import CommentsSection from './CommentsSection';
+import EmailSection from './EmailSection';
 
 function BugDetails({
   bug,
@@ -15,6 +16,7 @@ function BugDetails({
   return (
     <div className="border-t border-gray-200 p-5 bg-gray-50 animate-fadeIn">
       <ResolutionSection bug={bug} />
+      <EmailSection bug={bug} />
 
       {bug.status.toLowerCase() !== 'resolved' && (
         <SuggestedResolutions

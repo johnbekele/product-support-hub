@@ -184,15 +184,16 @@ function UserNavBar() {
 
         {/* Navigation and Controls Section */}
         <div className="flex items-center gap-4">
-          {!isMobile && (
+          <div className="text-stone-50">Admin Dashboard </div>
+          {/* {!isMobile && (
             <div className="text-stone-50">
               {activeRole === 'Admin'
                 ? 'Admin Dashboard'
                 : activeRole === 'Moderator'
                 ? 'Moderator Dashboard'
-                : 'User Dashboard'}
+                : 'Admin Dashboard'}
             </div>
-          )}
+          )} */}
 
           <Link
             className="text-stone-50 hover:underline px-3 py-2 transition-all"

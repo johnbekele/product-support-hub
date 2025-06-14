@@ -30,6 +30,20 @@ const deletePost = async (postId) => {
   return response.data;
 };
 
+const postSuggestedResolutions = async (postId, resolutions) => {
+  const token = getToken();
+  const response = await axios.post(
+    `${API_URL}/post/suggestedresolutions/${postId}`,
+    { suggestedResolutions: resolutions },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data;
+};
+
 export function usePost() {
   const queryClient = useQueryClient();
 
@@ -50,6 +64,13 @@ export function usePost() {
 
   const deletePostMutation = useMutation({
     mutationFn: deletePost,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+    },
+  });
+
+  const postResolutionMutation = useMutation({
+    mutationFn: postSuggestedResolutions,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
     },
@@ -80,7 +101,7 @@ export function usePost() {
 
   return {
     postdata,
-    createPost: creatPostMutation.mutate,
+    createPostMutation: creatPostMutation.mutate,
     deletePost: deletePostMutation.mutate,
     isLoading: PostQuery.isLoading,
     isError: PostQuery.isError,
