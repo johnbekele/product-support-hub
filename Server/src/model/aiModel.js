@@ -6,12 +6,78 @@ import Post from './postSchema.js';
 import mongoose from 'mongoose';
 import cleanGeminiResponse from '../script/cleanGeminiResponse.js';
 import Content from './contentModel.js';
+import { Storage } from '@google-cloud/storage';
 
 dotenv.config();
 
 // Initialize Google GenAI client with the correct import
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENAI_API_KEY);
 const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
+
+
+// Add after your existing imports
+const storage = new Storage();
+
+// Add this new function
+const generateContentFromPDF = async (filePath) => {
+  try {
+    // Fetch data from DB
+    const posts = await Post.find();
+    const bugData = posts.length > 0 
+      ? JSON.stringify(posts.map(post => ({
+          id: post._id.toString(),
+          title: post.title,
+          description: post.description,
+          product: post.product,
+          type: post.type,
+          status: post.status,
+          resolution: post.resolution || '',
+        })))
+      : JSON.stringify(MOCK_BUGS);
+
+    // Read PDF file
+    const fileData = fs.readFileSync(filePath);
+    
+    // Fix: Use correct structure for PDF part
+    const pdfPart = {
+      inlineData: {
+        data: fileData.toString('base64'),
+        mimeType: 'application/pdf'
+      }
+    };
+
+    const prompt = `Use this ${bugData} data and respond ONLY with a valid JSON array containing the id, title, description, product, type, status, and resolution of a bug found in the PDF. Do not include any explanatory text outside the JSON. If you don't find the bug in the list respond with "bug not found"`;
+
+    // Fix: Use correct content structure
+    const result = await model.generateContent([
+      pdfPart,
+      { text: prompt }
+    ]);
+
+    const response = result.response;
+    const text = response.text();
+
+    // Same JSON parsing logic
+    try {
+      return JSON.parse(text);
+    } catch (jsonError) {
+      const jsonMatch = text.match(/\[\s*\{.*\}\s*\]/s);
+      if (jsonMatch) {
+        try {
+          return JSON.parse(jsonMatch[0]);
+        } catch (extractError) {
+          return { rawText: text };
+        }
+      }
+      return { rawText: text };
+    }
+
+  } catch (error) {
+    console.error('PDF processing error:', error);
+    throw new Error(`PDF processing failed: ${error.message}`);
+  }
+};
+
 
 const uploadFileToAI = async (filePath, mimeType) => {
   try {
@@ -70,7 +136,7 @@ const generateContentFromFile = async (fileData, mimeType) => {
     };
 
     // prompt
-    const prompt = `Use this ${fileData.bugData} data and respond ONLY with a valid JSON array containing the id, title, description, product, type, status, and resolution of a bug found in the image. Do not include any explanatory text outside the JSON.also please if you don't find the bug in the list responde with bug not found `;
+    const prompt = `Use this ${fileData.bugData} data and respond ONLY with a valid JSON array containing the question as titel and the answer as resolution of a bug found in the image. Do not include any explanatory text outside the JSON.also please if you don't find the bug in the list responde with bug not found `;
 
     // response
     const result = await model.generateContent({
@@ -246,5 +312,6 @@ export {
   uploadFileToAI,
   generateContentFromFile,
   generateResolutionEmail,
+  generateContentFromPDF,
   testAiModel,
 };

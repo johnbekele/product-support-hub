@@ -1,6 +1,9 @@
 import Post from '../model/postSchema.js';
 import User from '../model/userSchema.js';
+
+
 const getPosts = async (req, res) => {
+  console.log("get post fteching ....");
   try {
     const posts = await Post.find()
       .populate('createdBy', 'name email')

@@ -13,6 +13,12 @@ router.post(
 );
 
 router.post('/image-ocr', uploadToMemory.single('image'), worker);
+router.post(
+  '/process-pdf',
+  uploadToMemory.single('pdf'),
+  imageController.processPdfCp
+);
+
 
 // Email generation route
 router.post('/generate-email/:bugid', imageController.generateEmail);

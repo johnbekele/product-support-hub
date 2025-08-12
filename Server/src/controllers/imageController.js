@@ -1,8 +1,11 @@
 import {
   processImageWithAI,
   processResolutionEmail,
+  processPdf,
 } from '../services/aiService.js';
 import Post from '../model/postSchema.js';
+
+import fs from 'fs';
 
 const processImage = async (req, res, next) => {
   try {
@@ -68,4 +71,31 @@ const generateEmail = async (req, res) => {
   }
 };
 
-export default { processImage, generateEmail };
+
+const processPdfCp = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        error: true,
+        message: "No pdf file uploaded. Use 'pdf' as the field name.",
+      });
+    }
+
+    console.log('Processing PDF:', req.file.originalname);
+
+    const result = await processPdf(req.file);
+
+    res.status(200).json({
+      error: false,
+      ...result,
+    });
+  } catch (error) {
+    console.error('Error processing PDF:', error);
+    next(error);
+  }
+};
+
+
+
+
+export default { processImage, generateEmail,processPdfCp };
