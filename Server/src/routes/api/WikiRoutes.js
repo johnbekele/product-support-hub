@@ -19,4 +19,9 @@ router.post('/mig-data/test/ai', async (req, res) => {
   }
 });
 
+router.get('/wikiTable',WikiDataTestController.getWikiTable);
+
+
+router.post('/create/check',WikiDataTestController.addWiki);
+
 export default router;

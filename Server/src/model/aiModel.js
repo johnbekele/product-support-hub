@@ -46,7 +46,7 @@ const generateContentFromPDF = async (filePath) => {
       }
     };
 
-    const prompt = `Use this ${bugData} data and respond ONLY with a valid JSON array containing the id, title, description, product, type, status, and resolution of a bug found in the PDF. Do not include any explanatory text outside the JSON. If you don't find the bug in the list respond with "bug not found"`;
+    const prompt = `Use this ${bugData} pdf and extract question as title and answer as resolution  and respond ONLY with a valid JSON array containing the resolution and title  don't add any other thing if the pdf don't have question and answer try to undertand it and if it make sense there is question asked and answerdd try to extracte but if not responde saying "no response " `;
 
     // Fix: Use correct content structure
     const result = await model.generateContent([

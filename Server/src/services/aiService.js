@@ -23,7 +23,7 @@ const processImageWithAI = async (file) => {
     fs.writeFileSync(tmpPath,file.buffer);
     // Upload file to prepare for AI processing
     const fileData = await uploadFileToAI(tmpPath, file.mimetype);
-
+    
     // Generate content using the file data
     const aiResponse = await generateContentFromFile(fileData, file.mimetype);
 
