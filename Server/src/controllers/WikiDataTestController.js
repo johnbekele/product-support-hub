@@ -15,24 +15,42 @@ const getData = async (_, res) => {
   }
 };
 
-const addWiki=async (req,res)=>{
-  const {title , resolution , found}=req.body;
-  try{
-    const titleExist=await Wiki.findOne({title:title})
-    if(titleExist){
-      console.log(`Resorce alredy exist :${titleExist.title}`)
-      return res.status(400).json({
-        "Message":"Resource alredy existed " ,
-        "decision":titleExist.title
+const addWiki = async (req, res) => {
+  const { title, resolution, found } = req.body;
+  
+  // Add input validation
+  if (!title || !resolution || found === undefined) {
+    return res.status(400).json({
+      message: "Missing required fields: title, resolution, found"
+    });
+  }
+
+  try {
+    const titleExist = await Wiki.findOne({ title });
+    if (titleExist) {
+      console.log(`Resource already exists: ${titleExist.title}`);
+      return res.status(409).json({ 
+        message: "Resource already exists",
+        existing: titleExist.title
       });
     }
-    const result=await Wiki.create({title:title ,resolution:resolution , found:found})
-   console.log(`resource created succesfully ${result}`)
-   return res.status(200).json({"message":"resorce created " ,result})
-  }catch(error){
-    return res.status(500).json({message:"Faild to create wiki founding " , error:error.message});
+
+    const result = await Wiki.create({ title, resolution, found });
+    console.log(`Resource created successfully: ${result._id}`);
+    
+    return res.status(201).json({ 
+      message: "Resource created successfully",
+      data: result
+    });
+    
+  } catch (error) {
+    console.error('Wiki creation error:', error);
+    return res.status(500).json({
+      message: "Failed to create wiki entry",
+      error: error.message
+    });
   }
-}
+};
 
 const getWikiTable=async(req, res)=>{
   try{
