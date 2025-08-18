@@ -8,7 +8,7 @@ const UserDashboard = lazy(() =>
 );
 const LoginPage = lazy(() => import('../Pages/LoginPage.jsx'));
 const AddPostForm = lazy(() => import('../Components/AddPostForm.jsx'));
-
+const UserManagementPage=lazy(()=> import ('../Pages/Dashboards/UserManagementPage.jsx'));
 const AppRoutes = () => {
   return (
     <Router>
@@ -21,6 +21,7 @@ const AppRoutes = () => {
               <Route index element={<UserDashboard />} /> {/* Matches "/" */}
               <Route path="bugfeed" element={<UserDashboard />} />
               <Route path="createpost" element={<AddPostForm />} />
+              <Route path="/KB-Managment" element={<UserManagementPage />} />
             </Route>
           </Route>
         </Routes>
