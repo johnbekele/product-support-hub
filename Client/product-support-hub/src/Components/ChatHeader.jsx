@@ -1,17 +1,7 @@
-// ChatHeader.jsx
 import React from 'react';
 import { motion } from 'framer-motion';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 
-/**
- * ChatHeader Component
- *
- * The header section of the chat box with title and close button
- *
- * @param {Object} props - Component props
- * @param {Function} props.onClose - Function to call when closing the chat
- * @param {Object} props.theme - Theme object for styling
- */
 function ChatHeader({ onClose, theme }) {
   return (
     <div

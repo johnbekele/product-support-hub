@@ -1,10 +1,9 @@
-// ChatInput.jsx
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { PaperClipIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline';
+import { PaperClipIcon } from '@heroicons/react/24/outline';
 import FileUploadArea from './FileUploadArea';
 
-function ChatInput({ onSendMessage, onSendFile, theme }) {
+function ChatInput({ onSendMessage, theme, isLoading = false }) {
   const [newMessage, setNewMessage] = useState('');
   const [showFileUpload, setShowFileUpload] = useState(false);
   const [processingResult, setProcessingResult] = useState(null);
@@ -12,9 +11,13 @@ function ChatInput({ onSendMessage, onSendFile, theme }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    if (isLoading || (!newMessage.trim() && !processingResult)) return;
+
     if (processingResult) {
-      // Send the AI processing result along with any message
-      onSendFile && onSendFile(processingResult, newMessage);
+      onSendMessage && onSendMessage(
+        newMessage || 'Image analysis request', 
+        processingResult.file
+      );
       setProcessingResult(null);
     } else if (newMessage.trim()) {
       onSendMessage && onSendMessage(newMessage);
@@ -24,13 +27,7 @@ function ChatInput({ onSendMessage, onSendFile, theme }) {
     setShowFileUpload(false);
   };
 
-  /**
-   * Handles when AI processing is complete
-   * @param {Object} result - The AI processing result
-   * @param {File} file - The original file
-   */
   const handleProcessingComplete = (result, file) => {
-    // Store the result to be sent when the user submits
     setProcessingResult({
       result: result,
       file: file,
@@ -38,21 +35,14 @@ function ChatInput({ onSendMessage, onSendFile, theme }) {
     });
   };
 
-  /**
-   * Handles file removal
-   */
   const handleFileRemoved = () => {
     setProcessingResult(null);
   };
 
-  /**
-   * Toggles file upload area visibility
-   */
   const toggleFileUpload = () => {
     setShowFileUpload(!showFileUpload);
   };
 
-  // Styling based on theme
   const inputStyle = {
     borderColor: theme.colors.mediumGray,
     backgroundColor: theme.colors.white,
@@ -62,10 +52,14 @@ function ChatInput({ onSendMessage, onSendFile, theme }) {
   };
 
   const buttonStyle = {
-    backgroundColor: theme.components.button.primary.backgroundColor,
+    backgroundColor: isLoading 
+      ? theme.colors.mediumGray 
+      : theme.components.button.primary.backgroundColor,
     color: theme.components.button.primary.color,
     fontFamily: theme.typography.fontFamily,
     fontSize: theme.typography.fontSize.normal,
+    opacity: isLoading ? 0.6 : 1,
+    cursor: isLoading ? 'not-allowed' : 'pointer',
   };
 
   const iconButtonStyle = {
@@ -75,7 +69,6 @@ function ChatInput({ onSendMessage, onSendFile, theme }) {
 
   return (
     <div className="chat-input-container">
-      {/* File Upload Area */}
       {showFileUpload && (
         <div className="file-upload-wrapper px-4">
           <FileUploadArea
@@ -83,19 +76,38 @@ function ChatInput({ onSendMessage, onSendFile, theme }) {
             onFileRemoved={handleFileRemoved}
             theme={theme}
             acceptedTypes={['image/jpeg', 'image/png', 'image/gif']}
-            maxSize={5 * 1024 * 1024} // 5MB
+            maxSize={5 * 1024 * 1024}
           />
         </div>
       )}
 
-      {/* Message Input Form */}
+      {processingResult && (
+        <div className="processing-result px-4 py-2 bg-blue-50 border-t">
+          <div className="flex items-center space-x-2">
+            <img 
+              src={processingResult.fileUrl} 
+              alt="Upload preview" 
+              className="w-8 h-8 rounded object-cover"
+            />
+            <span className="text-sm text-blue-700">
+              Image ready for analysis
+            </span>
+            <button 
+              onClick={handleFileRemoved}
+              className="text-red-500 hover:text-red-700 text-sm"
+            >
+              Remove
+            </button>
+          </div>
+        </div>
+      )}
+
       <form
         onSubmit={handleSubmit}
         className="chat-input p-4 border-t"
         style={{ borderColor: theme.colors.mediumGray }}
       >
         <div className="flex items-center space-x-2">
-          {/* File Upload Toggle Button */}
           <motion.button
             type="button"
             className="p-2 rounded-full"
@@ -103,39 +115,39 @@ function ChatInput({ onSendMessage, onSendFile, theme }) {
             onClick={toggleFileUpload}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            aria-label={
-              showFileUpload ? 'Hide file upload' : 'Show file upload'
-            }
+            disabled={isLoading}
+            aria-label={showFileUpload ? 'Hide file upload' : 'Show file upload'}
           >
             <PaperClipIcon className="w-5 h-5" />
           </motion.button>
 
-          {/* Text Input */}
           <input
             type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder={
-              processingResult
+              isLoading 
+                ? 'AI is analyzing...'
+                : processingResult
                 ? 'Add a message about this image...'
                 : 'Type your message...'
             }
             className="flex-grow p-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500"
             style={inputStyle}
+            disabled={isLoading}
             aria-label="Message input"
           />
 
-          {/* Send Button */}
           <motion.button
             type="submit"
-            className="px-4 py-2 rounded-lg"
+            className="px-4 py-2 rounded-lg min-w-[60px]"
             style={buttonStyle}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            disabled={!newMessage.trim() && !processingResult}
+            whileHover={!isLoading ? { scale: 1.05 } : {}}
+            whileTap={!isLoading ? { scale: 0.95 } : {}}
+            disabled={isLoading || (!newMessage.trim() && !processingResult)}
             aria-label="Send message"
           >
-            Send
+            {isLoading ? '...' : 'Send'}
           </motion.button>
         </div>
       </form>

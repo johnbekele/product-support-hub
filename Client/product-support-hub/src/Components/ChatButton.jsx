@@ -1,18 +1,7 @@
-// ChatButton.jsx
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline';
 
-/**
- * ChatButton Component
- *
- * Button in the navbar that toggles the chat box
- *
- * @param {Object} props - Component props
- * @param {Function} props.onClick - Function to call when button is clicked
- * @param {boolean} props.isOpen - Whether the chat is currently open
- * @param {Object} props.theme - Theme object for styling
- */
 function ChatButton({ onClick, isOpen, theme }) {
   return (
     <motion.button

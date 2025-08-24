@@ -1,26 +1,25 @@
-// ChatBox.jsx - A resizable chat interface component with messaging functionality
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ChatHeader from './ChatHeader';
 import ChatMessages from './ChatMessages';
 import ChatInput from './ChatInput';
+import { useAiChat } from '../Hook/useAiChat.js';
 
 function ChatBox({ isOpen, onClose, theme }) {
   const chatBoxRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
 
-  // Chat configuration
+  const { 
+    messages, 
+    isLoading, 
+    sendMessage, 
+    closeChat 
+  } = useAiChat();
+
   const MIN_WIDTH = 300;
   const MAX_WIDTH = 600;
   const [chatWidth, setChatWidth] = useState(384);
 
-  // Chat messages state
-  const [messages, setMessages] = useState([
-    { id: 1, text: 'Hello! How can I help you today?', sender: 'bot' },
-    { id: 2, text: 'Welcome to Product Support Hub', sender: 'bot' },
-  ]);
-
-  // Close chat when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -29,7 +28,7 @@ function ChatBox({ isOpen, onClose, theme }) {
         isOpen &&
         !isDragging
       ) {
-        onClose();
+        handleClose();
       }
     };
 
@@ -37,67 +36,18 @@ function ChatBox({ isOpen, onClose, theme }) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen, onClose, isDragging]);
 
-  // Handle resize drag events
+  const handleClose = () => {
+    closeChat();
+    onClose();
+  };
+
   const handleDragStart = () => setIsDragging(true);
   const handleDragEnd = () => setIsDragging(false);
 
-  // Send a text message
-  const handleSendMessage = (messageText) => {
-    if (messageText.trim()) {
-      // Add user message
-      setMessages([
-        ...messages,
-        { id: Date.now(), text: messageText, sender: 'user' },
-      ]);
-
-      // Simulate bot response
-      setTimeout(() => {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now() + 1,
-            text: 'Thanks for your message! Our support team will get back to you soon.',
-            sender: 'bot',
-          },
-        ]);
-      }, 1000);
-    }
+  const handleSendMessage = (messageText, file = null) => {
+    sendMessage(messageText, file);
   };
 
-  // Send a file with AI processing results
-  const handleSendProcessedFile = (processingData, caption = '') => {
-    // Add user message with file
-    setMessages([
-      ...messages,
-      {
-        id: Date.now(),
-        text: caption,
-        sender: 'user',
-        file: {
-          name: processingData.file.name,
-          type: processingData.file.type,
-          size: processingData.file.size,
-          url: processingData.fileUrl,
-        },
-        aiProcessed: true,
-      },
-    ]);
-
-    // Simulate AI response
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now() + 1,
-          text: "I've analyzed your screenshot and found the following bug information:",
-          sender: 'bot',
-          bugInfo: processingData.result,
-        },
-      ]);
-    }, 1000);
-  };
-
-  // Theme-based styling
   const chatBoxStyle = {
     backgroundColor: theme.colors.white,
     color: theme.colors.black,
@@ -124,7 +74,6 @@ function ChatBox({ isOpen, onClose, theme }) {
             bounce: 0.25,
           }}
         >
-          {/* Resize handle */}
           <div
             className="absolute left-0 top-0 bottom-0 w-1 cursor-ew-resize hover:bg-blue-500 hover:opacity-50 z-10"
             onMouseDown={(e) => {
@@ -151,12 +100,16 @@ function ChatBox({ isOpen, onClose, theme }) {
             }}
           />
 
-          <ChatHeader onClose={onClose} theme={theme} />
-          <ChatMessages messages={messages} theme={theme} />
+          <ChatHeader onClose={handleClose} theme={theme} />
+          <ChatMessages 
+            messages={messages} 
+            theme={theme} 
+            handlefoundid={(bugId) => console.log('Bug selected:', bugId)}
+          />
           <ChatInput
             onSendMessage={handleSendMessage}
-            onSendFile={handleSendProcessedFile}
             theme={theme}
+            isLoading={isLoading}
           />
         </motion.div>
       )}

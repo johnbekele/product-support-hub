@@ -3,10 +3,10 @@ import axios from 'axios';
 import { API_URL } from '../Config/EnvConfig';
 import { toast } from 'react-hot-toast';
 
-// Get the auth token (if needed, add it to headers in axios calls)
+
 const getToken = () => localStorage.getItem('token');
 
-// Function to convert image to grayscale before processing
+
 const convertToGrayscale = (file) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
