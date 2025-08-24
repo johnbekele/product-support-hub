@@ -19,20 +19,47 @@ const agent=genAI.getGenerativeModel({model:"gemini-2.5-flash"});
 // Add after your existing imports
 const storage = new Storage();
 
-// aiModel.js
 const analyseVectorResponse = async (payload) => {
   if (!payload) {
     throw new Error("payload error");
   }
   
-  const vectoreData = payload.vectoreData;
-  const text = payload.text;
+  const { vectoreData, text, conversationHistory = [] } = payload;
   
   try {
-    const prompt = `
-    Question: ${text} 
-    Context: ${vectoreData} 
-    answer perfectly using the context only. if you fill like narrowing search ask for additional infomation ones `;
+    // Build conversation context
+    let contextPrompt = "";
+    if (conversationHistory.length > 0) {
+      contextPrompt = "\n\nPrevious conversation context:\n";
+      conversationHistory.forEach((msg, index) => {
+        contextPrompt += `${msg.role}: ${msg.content}\n`;
+      });
+      contextPrompt += "\nCurrent question: ";
+    }
+
+   const prompt = ` You are a technical support AI assistant. Be helpful, precise, and concise.
+
+Conversation context: ${contextPrompt}${text}
+
+Here is the relevant knowledge base data from vector search: ${vectoreData}
+
+Rules:
+
+Use ONLY the provided context (knowledge base data) to answer. Do not invent facts.
+If the context is insufficient, explicitly say it is insufficient, then ask exactly ONE concise clarifying question.
+If the user prefixes their input with "P:" (priority chat), ignore the context entirely and respond conversationally to the message after "P:".
+Keep answers concise and directly useful. Use bullet points for lists where appropriate.
+If the user message is not a question (and not prefixed with "P:"), respond briefly and helpfully, using the context where applicable.
+Return plain text only.
+Instructions:
+
+If the message starts with "P:", treat everything after "P:" as the user’s message and ignore the context completely.
+Otherwise, answer strictly from the provided context or ask one clarifying question if needed.
+Consider the previous conversation when formulating your response.
+User message: ${text}
+
+Now provide your response: `.trim();
+
 
     const result = await model.generateContent({
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
@@ -48,6 +75,8 @@ const analyseVectorResponse = async (payload) => {
     throw new Error(`AI model test failed: ${error.message}`);
   }
 };
+
+export default analyseVectorResponse;
 
 
 

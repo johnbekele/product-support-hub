@@ -70,11 +70,11 @@ const feedVector = async (req, res) => {
 };
 
 const queryVector = async (req, res) => {
-  const { default: Post } = await import("../model/postSchema.js");
-  const {analyseVectorResponse } = await import("../model/aiModel.js");
-  const { text } = req.body;
-  
   try {
+    const { default: Post } = await import("../model/postSchema.js");
+    const { default: analyseVectorResponse } = await import("../model/aiModel.js");
+    const { text, conversationHistory = [] } = req.body;
+    
     const index = await vectorDb.initPinecone();
     const queryV = await vectorDb.getEmbedding(text);
     
@@ -89,21 +89,21 @@ const queryVector = async (req, res) => {
     const kbResults = await Post.find({
       _id: { $in: ids.map(id => new mongoose.Types.ObjectId(id)) }
     });
-  //  console.debug("found kb result",kbResults);
 
-
-    const payload={
-      vectoreData:JSON.stringify(kbResults),
-      text:text
-    }
-
-    // console.debug(payload.vectoreData);
-    const respond=await analyseVectorResponse(payload);
+    const payload = {
+      vectoreData: JSON.stringify(kbResults),
+      text: text,
+      conversationHistory: conversationHistory
+    };
+    
+    const respond = await analyseVectorResponse(payload);
     res.status(200).json(respond.rawText);
+    
   } catch (err) {
     console.error('Query error:', err);
     res.status(500).json({ err: err.message });
   }
 };
+
 
 module.exports = { feedVector, queryVector };
