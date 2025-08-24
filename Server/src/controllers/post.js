@@ -3,12 +3,12 @@ import User from '../model/userSchema.js';
 
 
 const getPosts = async (req, res) => {
-  console.log("get post fteching ....");
+  
   try {
     const posts = await Post.find()
       .populate('createdBy', 'name email')
       .sort({ createdAt: -1 });
-    console.log(posts)
+   
     return res.status(200).json(posts);
   } catch (error) {
     console.error(error);
@@ -30,8 +30,8 @@ const addPost = async (req, res) => {
     } = req.body;
     const username = req.user.username;
 
-    console.log(req.body);
-    // Validate input
+    
+  
 
     if (
       !title ||

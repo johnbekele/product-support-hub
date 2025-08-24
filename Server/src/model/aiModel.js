@@ -13,10 +13,44 @@ dotenv.config();
 // Initialize Google GenAI client with the correct import
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENAI_API_KEY);
 const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
+const agent=genAI.getGenerativeModel({model:"gemini-2.5-flash"});
 
 
 // Add after your existing imports
 const storage = new Storage();
+
+// aiModel.js
+const analyseVectorResponse = async (payload) => {
+  if (!payload) {
+    throw new Error("payload error");
+  }
+  
+  const vectoreData = payload.vectoreData;
+  const text = payload.text;
+  
+  try {
+    const prompt = `
+    Question: ${text} 
+    Context: ${vectoreData} 
+    answer perfectly using the context only. if you fill like narrowing search ask for additional infomation ones `;
+
+    const result = await model.generateContent({
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+    });
+
+    const response = result.response;
+    const responseText = response.text();
+
+    return { rawText: responseText };
+  
+  } catch (error) {
+    console.error('Error testing AI model:', error);
+    throw new Error(`AI model test failed: ${error.message}`);
+  }
+};
+
+
+
 
 // Add this new function
 const generateContentFromPDF = async (filePath) => {
@@ -308,10 +342,11 @@ const testAiModel = async (question) => {
   }
 };
 
-export {
+export  {
   uploadFileToAI,
   generateContentFromFile,
   generateResolutionEmail,
   generateContentFromPDF,
   testAiModel,
+  analyseVectorResponse
 };

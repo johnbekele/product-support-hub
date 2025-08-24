@@ -2,6 +2,7 @@
 const vectorDb = require("../config/vectorDb.cjs");
 const mongoose = require("mongoose");
 
+
 const feedVector = async (req, res) => {
   const { default: Post } = await import("../model/postSchema.js");
   
@@ -70,6 +71,7 @@ const feedVector = async (req, res) => {
 
 const queryVector = async (req, res) => {
   const { default: Post } = await import("../model/postSchema.js");
+  const {analyseVectorResponse } = await import("../model/aiModel.js");
   const { text } = req.body;
   
   try {
@@ -78,7 +80,7 @@ const queryVector = async (req, res) => {
     
     const result = await index.query({
       vector: queryV,
-      topK: 2,
+      topK: 5,
       includeMetadata: true
     });
 
@@ -87,8 +89,17 @@ const queryVector = async (req, res) => {
     const kbResults = await Post.find({
       _id: { $in: ids.map(id => new mongoose.Types.ObjectId(id)) }
     });
+  //  console.debug("found kb result",kbResults);
 
-    res.json(kbResults);
+
+    const payload={
+      vectoreData:JSON.stringify(kbResults),
+      text:text
+    }
+
+    // console.debug(payload.vectoreData);
+    const respond=await analyseVectorResponse(payload);
+    res.status(200).json(respond.rawText);
   } catch (err) {
     console.error('Query error:', err);
     res.status(500).json({ err: err.message });
