@@ -27,6 +27,9 @@ const configureSocket = (server) => {
       }
     });
 
+    console.log(onlineUsers);
+
+
     socket.on('joinRoom', (chatId) => {
       socket.join(chatId);
       console.log(`User ${socket.id} joined chat ${chatId}`);
